@@ -14,11 +14,10 @@ int main(){
     regex digits ("\\d\\d*");
     for (string line; getline(cin, line);){
         int i = 0;
-        bool possible = true;
         vector<int> maxs {0, 0, 0};
         for (regex r : exps){
             string::const_iterator head (line.cbegin());
-            while (regex_search(head, line.cend(), matches, r) & possible){
+            while (regex_search(head, line.cend(), matches, r)){
                 string round = matches[0];
                 if (regex_search(round, dmatches, digits)){
                     string dgt = dmatches[0];
@@ -28,7 +27,7 @@ int main(){
             }
             i++;
         }
-        int power = ranges::fold_left(maxs, 1, multiplies());
+        int power = accumulate(begin(maxs), end(maxs), 1, multiplies());
         count += power;
     }
     cout << count << endl;
