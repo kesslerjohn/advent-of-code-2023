@@ -9,44 +9,33 @@ int main(){
     int count = 0;
     smatch matches;
     smatch dmatches;
-    regex red ("\d\d?\ red");
-    regex blue ("\d\d?\ blue");
-    regex green ("\d\d?\ green");
-    regex game ("Game\ \d\d?\d?");
-    regex digits ("\d\d?\d?");
-    bool possible = True;
+    vector<regex> exps {regex("\\d+\\ red"), regex("\\d+\\ blue"), regex("\\d+\\ green")};
+    regex red ("\\d+\\ red");
+    regex blue ("\\d+\\ blue");
+    regex green ("\\d+\\ green");
+    regex game ("Game\\ \\d\\d*");
+    regex digits ("\\d\\d*");
+    bool possible = true;
     for (string line; getline(cin, line);){
-        regex_search(line, matches, red); //match reds
-        for (string match; matches;){
-            regex_search(match, dmatches, digits);
-            for (string dgt; dmatches;){
-                if (stoi(dgt) > 12){
-                    possible = False;
+        int thresh = 12;
+        for (regex r : exps){
+            string::const_iterator head (line.cbegin());
+            while (regex_search(head, line.cend(), matches, r)){
+                string round = matches[0];
+                if (regex_search(round, dmatches, digits)){
+                    string dgt = dmatches[0];
+                    possible = possible & (stoi(round) <= thresh);
                 }
-            }
-        }
-        regex_search(line, matches, green); //match greens
-        for (string match; matches;){
-            regex_search(match, dmatches, digits);
-            for (string dgt; dmatches;){
-                if (stoi(dgt) > 13){
-                    possible = False;
-                }
-            }
-        }
-        regex_search(line, matches, blue); //match blues
-        for (string match; matches;){
-            regex_search(match, dmatches, digits);
-            for (string dgt; dmatches;){
-                if (stoi(dgt) > 14){
-                    possible = False;
-                }
+                thresh++;
+                head = matches.suffix().first;
             }
         }
         if (possible){
             regex_search(line, matches, game);
-            regex_search(matches[0], dmatches, digits);
-            count += stoi(dmatches[0]);
+            string gnum = matches[0];
+            regex_search(gnum, dmatches, digits);
+            string val = dmatches[0];
+            count += stoi(val);
         }
         cout << line << endl;
     }
