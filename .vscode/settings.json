@@ -85,6 +85,7 @@
         "algorithm": "cpp",
         "__tree": "cpp",
         "map": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "filesystem": "cpp"
     }
 }
